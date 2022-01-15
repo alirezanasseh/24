@@ -1,9 +1,11 @@
 let emptyPos = {x: 4, y: 4}, pos = {}, num = {};
+let enabled = false;
 
 function rootStyles(root) {
     root.style.height = '100vh';
     root.style.minHeight = '416px';
     root.style.display = 'flex';
+    root.style.flexDirection = 'column';
     root.style.justifyContent = 'center';
     root.style.alignItems = 'center';
     root.style.fontFamily = 'Arial';
@@ -16,6 +18,15 @@ function tableStyles(table) {
     table.style.height = '402px';
     table.style.border = '7px solid rgb(87 87 203)';
     table.style.position = 'relative';
+}
+
+function resetStyles(reset) {
+    reset.style.marginTop = '10px';
+    reset.style.fontSize = '24px';
+    reset.style.padding = '10px';
+    reset.style.backgroundColor = 'orange';
+    reset.style.border = '1px solid rgb(205 133 0)';
+    reset.style.borderRadius = '5px';
 }
 
 function pieceStyles(piece, x, y) {
@@ -73,10 +84,13 @@ function checkTable() {
             count: party.variation.range(100, 200),
             shapes: ['star']
         });
+        enabled = false;
+        reset.disabled = false;
     }
 }
 
 function move(id, byUser = true) {
+    if (!enabled && byUser) return;
     const cellPos = pos[id];
     if (cellPos.x === emptyPos.x) {
         let x = cellPos.x;
@@ -157,6 +171,8 @@ function randomize(n) {
         rnd = Math.floor(Math.random() * 4);
         keyMove({code: codes[rnd]}, false);
     }
+    reset.disabled = true;
+    enabled = true;
 }
 
 const root = document.createElement("div");
@@ -185,7 +201,11 @@ for (let y = 0; y < 5; y++) {
     }
 }
 root.appendChild(table);
+const reset = document.createElement('button');
+reset.innerText = 'Play!';
+reset.onclick = () => randomize(100);
+resetStyles(reset);
+root.appendChild(reset);
 document.body.appendChild(root);
 document.addEventListener('keydown', keyMove);
-randomize(100);
 pieceLinks();
