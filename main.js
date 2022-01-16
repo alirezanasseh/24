@@ -1,5 +1,6 @@
 let emptyPos = {x: 4, y: 4}, pos = {}, num = {};
 let enabled = false, moves = 0;
+let best = localStorage.getItem('best') ?? 0;
 
 function rootStyles(root) {
     root.style.height = '100vh';
@@ -32,11 +33,15 @@ function footerStyles(footer) {
     footer.style.marginTop = '10px';
     footer.style.display = 'flex';
     footer.style.alignItems = 'center';
-    footer.style.gap = '200px';
+    footer.style.gap = '50px';
 }
 
 function numMovesStyles(numMoves) {
     numMoves.style.color = 'black';
+}
+
+function bestStyles(bestRecord) {
+    bestRecord.style.color = 'black';
 }
 
 function pieceStyles(piece, x, y) {
@@ -77,6 +82,20 @@ function piecePositions() {
     }
 }
 
+function won() {
+    party.confetti(table, {
+        count: party.variation.range(100, 200),
+        shapes: ['star']
+    });
+    enabled = false;
+    reset.disabled = false;
+    if (moves < best || best === 0) {
+        best = moves;
+        localStorage.setItem('best', best.toString());
+        bestRecord.innerText = 'Best : ' + best.toString();
+    }
+}
+
 function checkTable() {
     let solved = true;
     let number = 1;
@@ -90,12 +109,7 @@ function checkTable() {
         if (!solved) break;
     }
     if (solved) {
-        party.confetti(table, {
-            count: party.variation.range(100, 200),
-            shapes: ['star']
-        });
-        enabled = false;
-        reset.disabled = false;
+        won();
     }
 }
 
@@ -224,10 +238,14 @@ resetStyles(reset);
 const numMoves = document.createElement('div');
 numMoves.innerText = '0 Moves';
 numMovesStyles(numMoves);
+const bestRecord = document.createElement('div');
+bestRecord.innerText = 'Best : ' + best.toString();
+bestStyles(bestRecord);
 const footer = document.createElement('div');
 footerStyles(footer);
 footer.appendChild(reset);
 footer.appendChild(numMoves);
+footer.appendChild(bestRecord);
 root.appendChild(footer);
 document.body.appendChild(root);
 document.addEventListener('keydown', keyMove);
