@@ -1,5 +1,5 @@
 let emptyPos = {x: 4, y: 4}, pos = {}, num = {};
-let enabled = false;
+let enabled = false, moves = 0;
 
 function rootStyles(root) {
     root.style.height = '100vh';
@@ -21,12 +21,22 @@ function tableStyles(table) {
 }
 
 function resetStyles(reset) {
-    reset.style.marginTop = '10px';
     reset.style.fontSize = '24px';
     reset.style.padding = '10px';
     reset.style.backgroundColor = 'orange';
     reset.style.border = '1px solid rgb(205 133 0)';
     reset.style.borderRadius = '5px';
+}
+
+function footerStyles(footer) {
+    footer.style.marginTop = '10px';
+    footer.style.display = 'flex';
+    footer.style.alignItems = 'center';
+    footer.style.gap = '200px';
+}
+
+function numMovesStyles(numMoves) {
+    numMoves.style.color = 'black';
 }
 
 function pieceStyles(piece, x, y) {
@@ -91,6 +101,10 @@ function checkTable() {
 
 function move(id, byUser = true) {
     if (!enabled && byUser) return;
+    if (byUser) {
+        moves++;
+        numMoves.innerText = moves.toString() + ' Moves';
+    }
     const cellPos = pos[id];
     if (cellPos.x === emptyPos.x) {
         let x = cellPos.x;
@@ -165,6 +179,8 @@ function keyMove(event, byUser = true) {
 }
 
 function randomize(n) {
+    moves = 0;
+    numMoves.innerText = '0 Moves';
     const codes = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
     let rnd;
     for (let i = 0; i < n; i++) {
@@ -205,7 +221,14 @@ const reset = document.createElement('button');
 reset.innerText = 'Play!';
 reset.onclick = () => randomize(100);
 resetStyles(reset);
-root.appendChild(reset);
+const numMoves = document.createElement('div');
+numMoves.innerText = '0 Moves';
+numMovesStyles(numMoves);
+const footer = document.createElement('div');
+footerStyles(footer);
+footer.appendChild(reset);
+footer.appendChild(numMoves);
+root.appendChild(footer);
 document.body.appendChild(root);
 document.addEventListener('keydown', keyMove);
 pieceLinks();
