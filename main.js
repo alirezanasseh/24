@@ -2,9 +2,13 @@ let emptyPos = {x: 4, y: 4}, pos = {}, num = {};
 let enabled = false, moves = 0;
 let best = localStorage.getItem('best') ?? 0;
 
+// Cell size scales to fit the smaller screen dimension (capped at the original 80px).
+const CELL = Math.min(80, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 30) / 5));
+const PIECE = CELL - 6;
+
 function rootStyles(root) {
     root.style.height = '100vh';
-    root.style.minHeight = '416px';
+    root.style.minHeight = (5 * CELL + 70) + 'px';
     root.style.display = 'flex';
     root.style.flexDirection = 'column';
     root.style.justifyContent = 'center';
@@ -15,8 +19,8 @@ function rootStyles(root) {
 }
 
 function tableStyles(table) {
-    table.style.width = '402px';
-    table.style.height = '402px';
+    table.style.width = (5 * CELL + 2) + 'px';
+    table.style.height = (5 * CELL + 2) + 'px';
     table.style.border = '7px solid rgb(87 87 203)';
     table.style.position = 'relative';
 }
@@ -33,7 +37,10 @@ function footerStyles(footer) {
     footer.style.marginTop = '10px';
     footer.style.display = 'flex';
     footer.style.alignItems = 'center';
-    footer.style.gap = '50px';
+    footer.style.gap = '20px';
+    footer.style.flexWrap = 'wrap';
+    footer.style.justifyContent = 'center';
+    footer.style.padding = '0 10px';
 }
 
 function numMovesStyles(numMoves) {
@@ -48,10 +55,10 @@ function pieceStyles(piece, x, y) {
     piece.style.border = '2px solid rgb(87 87 203)';
     piece.style.backgroundColor = 'rgb(120,120,238)';
     piece.style.position = 'absolute';
-    piece.style.top = (y * 80 + 2).toString() + 'px';
-    piece.style.left = (x * 80 + 2).toString() + 'px';
-    piece.style.width = '74px';
-    piece.style.height = '74px';
+    piece.style.top = (y * CELL + 2).toString() + 'px';
+    piece.style.left = (x * CELL + 2).toString() + 'px';
+    piece.style.width = PIECE + 'px';
+    piece.style.height = PIECE + 'px';
     piece.style.display = 'flex';
     piece.style.justifyContent = 'center';
     piece.style.alignItems = 'center';
@@ -76,8 +83,8 @@ function piecePositions() {
     for (let i = 1; i < 25; i++) {
         piece = document.getElementById(i.toString());
         if (piece) {
-            piece.style.top = (pos[i].y * 80 + 2).toString() + 'px';
-            piece.style.left = (pos[i].x * 80 + 2).toString() + 'px';
+            piece.style.top = (pos[i].y * CELL + 2).toString() + 'px';
+            piece.style.left = (pos[i].x * CELL + 2).toString() + 'px';
         }
     }
 }
